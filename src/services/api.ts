@@ -1,30 +1,37 @@
 import { teams, players, odds, leagueStats } from '../data/mockData';
+import { Team, Player, Odd } from '../types';
 
-// 模拟API响应
-const mockResponse = (data: any) => {
-  return Promise.resolve({ data });
+const mockResponse = <T>(data: T): Promise<{ data: T }> => {
+  try {
+    return Promise.resolve({ data });
+  } catch (error) {
+    return Promise.reject(new Error('数据处理失败'));
+  }
 };
 
-// 球队相关接口
 export const getTeams = (params?: { league?: string; season?: string }) => {
-  const filteredTeams = teams.filter(team => {
-    if (params?.league && team.league !== params.league) return false;
-    if (params?.season && team.season !== params.season) return false;
-    return true;
-  });
-  return mockResponse(filteredTeams);
+  try {
+    const filteredTeams = teams.filter((team: Team) => {
+      const leagueMatch = !params?.league || team.league === params.league;
+      const seasonMatch = !params?.season || team.season === params.season;
+      return leagueMatch && seasonMatch;
+    });
+    return mockResponse(filteredTeams);
+  } catch (error) {
+    return Promise.reject(new Error('获取球队数据失败'));
+  }
 };
 
 export const getTeamPointsTrend = (params?: { league?: string; season?: string }) => {
   const filteredTeams = teams
-    .filter(team => {
+    .filter((team: Team) => {
       if (params?.league && team.league !== params.league) return false;
       if (params?.season && team.season !== params.season) return false;
       return true;
     })
-    .sort((a, b) => b.points - a.points)
+    .sort((a: Team, b: Team) => b.points - a.points)
     .slice(0, 5)
-    .map(team => ({
+    .map((team: Team) => ({
       name: team.team,
       value: team.points,
       wins: team.wins,
@@ -36,12 +43,12 @@ export const getTeamPointsTrend = (params?: { league?: string; season?: string }
 
 export const getTeamGoalsStats = (params?: { league?: string; season?: string }) => {
   const filteredTeams = teams
-    .filter(team => {
+    .filter((team: Team) => {
       if (params?.league && team.league !== params.league) return false;
       if (params?.season && team.season !== params.season) return false;
       return true;
     })
-    .map(team => ({
+    .map((team: Team) => ({
       team: team.team,
       goalsFor: team.goalsFor,
       goalsAgainst: team.goalsAgainst,
@@ -51,62 +58,63 @@ export const getTeamGoalsStats = (params?: { league?: string; season?: string })
 };
 
 // 球员相关接口
-export const getPlayers = (params?: { league?: string; season?: string; team?: string; position?: string }) => {
-  const filteredPlayers = players.filter(player => {
-    if (params?.league && player.league !== params.league) return false;
-    if (params?.season && player.season !== params.season) return false;
-    if (params?.team && player.team !== params.team) return false;
-    if (params?.position && player.position !== params.position) return false;
-    return true;
-  });
-  return mockResponse(filteredPlayers);
+export const getPlayers = (params?: { team?: string; position?: string }) => {
+  try {
+    const filteredPlayers = players.filter(player => {
+      const teamMatch = !params?.team || player.team === params.team;
+      const positionMatch = !params?.position || player.position === params.position;
+      return teamMatch && positionMatch;
+    });
+    return mockResponse(filteredPlayers);
+  } catch (error) {
+    return Promise.reject(new Error('获取球员数据失败'));
+  }
 };
 
-export const getTopScorers = (params?: { league?: string; season?: string; limit?: number }) => {
-  const filteredPlayers = players
-    .filter(player => {
-      if (params?.league && player.league !== params.league) return false;
-      if (params?.season && player.season !== params.season) return false;
-      return true;
-    })
-    .sort((a, b) => b.goals - a.goals)
-    .slice(0, params?.limit || 10);
-  return mockResponse(filteredPlayers);
+export const getTopScorers = (params?: { limit?: number }) => {
+  try {
+    const filteredPlayers = players
+      .sort((a, b) => b.goals - a.goals)
+      .slice(0, params?.limit || 10);
+    return mockResponse(filteredPlayers);
+  } catch (error) {
+    return Promise.reject(new Error('获取射手榜数据失败'));
+  }
 };
 
-export const getTopAssists = (params?: { league?: string; season?: string; limit?: number }) => {
-  const filteredPlayers = players
-    .filter(player => {
-      if (params?.league && player.league !== params.league) return false;
-      if (params?.season && player.season !== params.season) return false;
-      return true;
-    })
-    .sort((a, b) => b.assists - a.assists)
-    .slice(0, params?.limit || 10);
-  return mockResponse(filteredPlayers);
+export const getTopAssists = (params?: { limit?: number }) => {
+  try {
+    const filteredPlayers = players
+      .sort((a: Player, b: Player) => b.assists - a.assists)
+      .slice(0, params?.limit || 10);
+    return mockResponse(filteredPlayers);
+  } catch (error) {
+    return Promise.reject(new Error('获取助攻榜数据失败'));
+  }
 };
 
 // 赔率相关接口
 export const getOdds = (params?: { league?: string; date?: string }) => {
-  const filteredOdds = odds.filter(odd => {
-    if (params?.league && odd.league !== params.league) return false;
-    if (params?.date) {
-      const matchDate = new Date(odd.matchDate).toISOString().split('T')[0];
-      if (matchDate !== params.date) return false;
-    }
-    return true;
-  });
-  return mockResponse(filteredOdds);
+  try {
+    const filteredOdds = odds.filter((odd: Odd) => {
+      const leagueMatch = !params?.league || odd.league === params.league;
+      const dateMatch = !params?.date || new Date(odd.date).toISOString().split('T')[0] === params.date;
+      return leagueMatch && dateMatch;
+    });
+    return mockResponse(filteredOdds);
+  } catch (error) {
+    return Promise.reject(new Error('获取赔率数据失败'));
+  }
 };
 
 export const getHighConfidenceOdds = (params?: { league?: string; minConfidence?: number }) => {
   const filteredOdds = odds
-    .filter(odd => {
+    .filter((odd: Odd) => {
       if (params?.league && odd.league !== params.league) return false;
       if (params?.minConfidence && odd.confidence < params.minConfidence) return false;
       return true;
     })
-    .sort((a, b) => b.confidence - a.confidence)
+    .sort((a: Odd, b: Odd) => b.confidence - a.confidence)
     .slice(0, 10);
   return mockResponse(filteredOdds);
 };
