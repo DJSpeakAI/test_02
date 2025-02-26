@@ -1,0 +1,29 @@
+{
+  "name": "football-consulting",
+  "version": "1.0.0",
+  "description": "足彩资讯网站",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.2.6",
+    "@types/echarts": "^4.9.22",
+    "antd": "^5.12.2",
+    "axios": "^1.6.2",
+    "echarts": "^5.4.3",
+    "echarts-for-react": "^3.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10"
+  }
+}
