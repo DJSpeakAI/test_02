@@ -3,13 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: './',
-  server: {
-    host: '0.0.0.0',
-    port: 3000,
-    strictPort: true
-  },
-  build: {
-    outDir: 'dist'
-  }
+  base: '/仓库名/', // 替换成您的 GitHub 仓库名
 })
