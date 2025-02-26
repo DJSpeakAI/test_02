@@ -1,12 +1,10 @@
 export interface Team {
   id: number;
   name: string;
-  points: number;
-  rank: number;
-  form: string[];
+  team: string;
   league: string;
   season: string;
-  team: string;
+  points: number;
   wins: number;
   draws: number;
   losses: number;
@@ -18,25 +16,26 @@ export interface Player {
   id: number;
   name: string;
   team: string;
+  position: string;
   goals: number;
   assists: number;
-  position: string;
 }
 
 export interface Odd {
   id: number;
   homeTeam: string;
   awayTeam: string;
+  league: string;
+  date: string;
   homeOdds: number;
   drawOdds: number;
   awayOdds: number;
   confidence: number;
-  date: string;
 }
 
 export interface LeagueStat {
   id: number;
+  league: string;
   type: string;
   value: number;
-  team: string;
 }
